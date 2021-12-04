@@ -13,3 +13,5 @@ Cargo.lock
 # Added by cargo
 
 /target
+/libs/fnv/target
+/libs/xshift/target
