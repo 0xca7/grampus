@@ -8,6 +8,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
+#include "kson.h"
 
 #define INPUT_BUFFER_SIZE 4096
 
@@ -55,6 +56,8 @@ main(int argc, char *argv[])
             printf("%02x ", *(buffer+i));
         }
         printf("\n");
+
+        kson_t *ks = kson_parse((const char*)buffer);
     }
 
     if(close(fd) == -1)
