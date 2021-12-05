@@ -1,61 +1,70 @@
 /*
-    this module allows the parsing of a grammar from a file.
-    for how the file specifiying the grammar must be structured,
-    refer the the README.md 
+    Description:
+
+        this module allows the parsing of a grammar from a file.
+        for how the file specifiying the grammar must be structured,
+        refer the the README.md.
+
+    Notes:
+        
+        some functions in this file are not programmed in an optimal
+        way. This is because I didn't want to use any crates or rust
+        nightly. 
+
+    Author: 0xca7
 */
 
-use std::fmt;
 use std::fs::File;
 use std::io::BufReader;
 use std::io::prelude::*;
 use std::collections::HashMap;
 use std::collections::HashSet;
 
-use regex::Regex;
-
 // identify non-terminals
 // '(.*?)'
+use regex::Regex;
 
 /// the symbol for replacement in a grammar.
 /// example: S = aSb (= is replacement), S -> aabS (-> is replacement)
 const PRODUCTION: &str = "=";
+
 /// delimiter symbol for productions
 /// example: S = aSb | ab
 const DELIMITER:  &str = "|";
 
 /// represents a formal grammar, including productions, terminals and 
 /// non-terminals 
-pub struct Grammar {
-    /// productions key => value 
-    pub productions: HashMap<String, Vec<Vec<String>>>,
-    /// terminal symbols
-    pub terminals: HashSet<String>,
-    /// non-terminal symbols
-    pub non_terminals: HashSet<String>,
-}
-
-impl Grammar {
-    /// create a new, empty grammar
-    pub fn new() -> Grammar {
-        Grammar {
-            productions: HashMap::new(),
-            terminals: HashSet::new(),
-            non_terminals: HashSet::new(),
-        }
-    }
-}
-
-impl fmt::Display for Grammar {
-    // This trait requires `fmt` with this exact signature.
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        for (key, value) in &self.productions {
-            write!(f, "{} => {:?}\n", key, value)?;
-        }
-        write!(f, "terminals: {:?}\n", self.terminals)?;
-        write!(f, "non-terminals: {:?}\n", self.non_terminals)
-    }
-}
-
+//pub struct Grammar {
+//    /// productions key => value 
+//    pub productions: HashMap<String, Vec<Vec<String>>>,
+//    /// terminal symbols
+//    pub terminals: HashSet<String>,
+//    /// non-terminal symbols
+//    pub non_terminals: HashSet<String>,
+//}
+//
+//impl Grammar {
+//    /// create a new, empty grammar
+//    pub fn new() -> Grammar {
+//        Grammar {
+//            productions: HashMap::new(),
+//            terminals: HashSet::new(),
+//            non_terminals: HashSet::new(),
+//        }
+//    }
+//}
+//
+//impl fmt::Display for Grammar {
+//    // This trait requires `fmt` with this exact signature.
+//    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+//        for (key, value) in &self.productions {
+//            write!(f, "{} => {:?}\n", key, value)?;
+//        }
+//        write!(f, "terminals: {:?}\n", self.terminals)?;
+//        write!(f, "non-terminals: {:?}\n", self.non_terminals)
+//    }
+//}
+//
 /// split a production by whitespaces and apply the 
 /// `split_non_terminals` function to it
 pub fn split_production(text: &String) -> Vec<String> {
@@ -183,7 +192,11 @@ fn extract_terminals(s: &Vec<String>, terminals: &mut HashSet<String>) {
 }
 
 /// read a grammar file and parse it to a hashmap data structure
-pub fn parse_grammar(file_name: &String ,g: &mut Grammar) -> std::io::Result<()> {
+pub fn parse_grammar(file_name: &String, 
+    grammar_productions: &mut HashMap<String, Vec<Vec<String>>>, 
+    grammar_terminals: &mut HashSet<String>, 
+    grammar_non_terminals: &mut HashSet<String>)
+    -> std::io::Result<()> {
 
     // file containing grammar
     let file = File::open(file_name)?;
@@ -215,7 +228,7 @@ pub fn parse_grammar(file_name: &String ,g: &mut Grammar) -> std::io::Result<()>
         // the LHS is always a non-terminal S -> aSb (S is non-terminal)
         let mut lhs = rule[0].to_string();
         remove_begin_end_whitespace(&mut lhs);
-        g.non_terminals.insert(lhs.clone());
+        grammar_non_terminals.insert(lhs.clone());
 
         // this is also the key
         let key = lhs;
@@ -236,24 +249,10 @@ pub fn parse_grammar(file_name: &String ,g: &mut Grammar) -> std::io::Result<()>
             // assignment below, declared here because of scope
             let mut split: Vec<String>;
 
-            // now we have one production item, which can consist of 
-            // multiple parts. multiple parts are split further, singular
-            // objects are left as-is
-            //if item.contains(" ") {
-
-                // split further 
-                //split = item.split(" ")
-                //    .map(|x| x.to_string())
-                //    .collect::<Vec<String>>();
-                //split = split_production(&item);
-                
-            //} else {
-                // if split contains something like +FRACTION
-                split = split_production(&item);
-            //}
+            split = split_production(&item);
 
             // get the terminals
-            extract_terminals(&split, &mut g.terminals);
+            extract_terminals(&split, grammar_terminals);
             // remove the quotes
             remove_quotes(&mut split);
 
@@ -263,7 +262,7 @@ pub fn parse_grammar(file_name: &String ,g: &mut Grammar) -> std::io::Result<()>
     
         // now we have a key and a value vector which we can push to
         // our hash map
-        g.productions.insert(key, values.clone());
+        grammar_productions.insert(key, values.clone());
 
         values.clear();
     }

@@ -3,11 +3,18 @@
 // cfg_grammar project
 //
 
-/// functions to parse a grammar from a file
-pub mod parse_grammar;
+/// the corpus for fuzzing
+pub mod corpus;
 
-pub mod generator;
+/// functions to parse a grammar from a file
+pub mod grammar_parser;
+
+/// reads a grammar from a file, represents
+/// a grammar inside the program
+pub mod grammar;
 
 /// internal representation of a syntax tree to 
 /// derive from a grammar
 pub mod syntax_tree;
+
+
