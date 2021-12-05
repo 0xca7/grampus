@@ -12,8 +12,11 @@ pub mod corpus;
 /// the fuzzing component
 pub mod fuzzer;
 
+/// fuzzing statistics
+pub mod stats;
+
 /// various mutations
-//pub mod mutation;
+pub mod mutation;
 
 /// functions to parse a grammar from a file
 pub mod grammar_parser;

@@ -16,7 +16,7 @@ pub fn generate_seed() -> u64 {
 
 /// write a crashfile with the input `fuzz` 
 /// to a file "crashes/hash(`fuzz`).txt"
-fn write_crashfile(fuzz: &Vec<u8>, hash: u64) {
+pub fn write_crashfile(fuzz: &Vec<u8>, hash: u64) {
 
     let filename = format!("crashes/{:x}.txt", hash);
     match File::create(filename) {
@@ -31,7 +31,7 @@ fn write_crashfile(fuzz: &Vec<u8>, hash: u64) {
 /// of the thread `thread_id` that created it.
 /// the filename is returned so it can be used as a parameter
 /// for the PUT.
-fn write_input_file(content: &Vec<u8>, thread_id: u32) -> String {
+pub fn write_input_file(content: &Vec<u8>, thread_id: u32) -> String {
     let filename = format!("fuzz_inputs/{:02x}.txt", thread_id);
     
     match File::create(&filename) {
