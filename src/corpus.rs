@@ -13,16 +13,9 @@ use std::collections::HashSet;
 extern crate xshift;
 use xshift::XorShift64;
 
+use crate::util::generate_seed;
 use crate::grammar::Grammar;
 use crate::syntax_tree::TreeNode;
-
-/// generate a seed for the PRNG
-/// this is encapsulated in a function for the case
-/// a different seed generation method shall be used 
-/// in the future
-fn generate_seed() -> u64 {
-    unsafe { core::arch::x86_64::_rdtsc() }
-}
 
 /// derive a random sentence from a grammar resulting in a 
 /// derivation tree, function is recursive
