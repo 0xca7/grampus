@@ -1,3 +1,17 @@
+/**
+ * Description:
+ * This program reads a file as raw bytes and passes it to
+ * the `kson_parse` function of klib (https://github.com/attractivechaos/klib)
+ * The program in this file was coded by me, kson.h and kson.c are from klib.
+ *
+ * Usage:
+ * run this program with ./example_target [FILENAME]
+ * where `FILENAME` is the path to the json file to parse
+ *
+ * Author:
+ * 0xca7
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -10,6 +24,7 @@
 
 #include "kson.h"
 
+/** @brief max number of bytes that can be read from a file by this program */
 #define INPUT_BUFFER_SIZE 4096
 
 int
@@ -24,7 +39,8 @@ main(int argc, char *argv[])
 
     if(argc != 2)
     {
-        printf("usage: ./dummy [filename]");
+        printf("usage: ./example_target [FILENAME]\n");
+        return ret;
     }
 
     fd = open(argv[1], O_RDONLY);
@@ -44,7 +60,8 @@ main(int argc, char *argv[])
         ret = EXIT_FAILURE;
     } 
     else 
-    {   /* print the result */
+    {   
+        /* print the result */
         printf("CHAR:\n");
         for(i = 0; i < bread; i++)
         {
@@ -57,7 +74,9 @@ main(int argc, char *argv[])
         }
         printf("\n");
 
+        /* parse the json */
         kson_t *ks = kson_parse((const char*)buffer);
+        (void)ks;
     }
 
     if(close(fd) == -1)

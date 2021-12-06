@@ -22,7 +22,7 @@ use crate::stats::Stats;
 use crate::mutation::Mutator;
 
 const NUMBER_THREADS: usize = 4;
-const MAX_NUMBER_MUTATIONS : usize = 10;
+const MAX_NUMBER_MUTATIONS : usize = 4;
 
 /// worker thread for a fuzzer. mutates an input from the
 /// corpus and passes it to the PUT. The resulting return code
@@ -54,11 +54,11 @@ fn worker(thread_id: u32, corpus: Arc<Vec<String>>,
 
         // write the input file 
         let input_filename = format!("{}",
-            write_input_file(&fuzz_input, thread_id));
+            write_input_file(&fuzz_input, thread_id).unwrap());
 
         // launch PUT and get result
         
-        let output = Command::new("./fuzz_target/dummy")
+        let output = Command::new("./fuzz_target/example_target")
             .arg(input_filename)
             .output();
 
@@ -71,7 +71,15 @@ fn worker(thread_id: u32, corpus: Arc<Vec<String>>,
                 }
             },
             None => { 
-                write_crashfile(&fuzz_input, fnv.hash(&fuzz_input[..]));
+                match write_crashfile(&fuzz_input, 
+                    fnv.hash(&fuzz_input[..])) {
+                    Ok(_)   => (),
+                    Err(e)  => print!("thread {} \
+                        couldn't write crashfile: {}\n
+                        fuzz input: {:?}\n",
+                        thread_id, e, fuzz_input),
+                }
+              
                 let mut _stats = stats.lock().unwrap();
                 _stats.inc_crashes();
             },
@@ -84,6 +92,10 @@ fn worker(thread_id: u32, corpus: Arc<Vec<String>>,
 
 }
 
+/// this is the main fuzzer routine, it starts 
+/// `NUMBER_THREADS` fuzzing threads
+/// `inputs` is the corpus of valid strings used for 
+/// mutations by the fuzzer
 pub fn fuzz(inputs: Vec<String>) {
 
     let mut seconds = 0;

@@ -47,9 +47,23 @@ impl Mutator {
     }
 
     pub fn mutate(&mut self, input: &Vec<u8>) -> Vec<u8> {
-        let f = self.mutations[(self.prng.rand() as usize) % 
-            self.mutations.len()];
-        f(&mut self.prng, input)
+    
+        let mut mutation = input.clone();
+
+        let n = (self.prng.rand() as usize) % self.max_mutations;
+        
+        for _ in 0..n {
+            let f = self.mutations[(self.prng.rand() as usize) % 
+                self.mutations.len()];
+            mutation = f(&mut self.prng, &mutation);
+    
+            // don't remove too many characters
+            if mutation.len() == 1 {
+                break;
+            }
+    
+        }
+        mutation
     }
 
 }

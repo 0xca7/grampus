@@ -6,7 +6,6 @@
 use std::time::Duration;
 
 pub struct Stats {
-    fcps: u64,
     total: u64,
     crashes: u64,
     cycles: u64,
@@ -16,7 +15,6 @@ impl Stats {
 
     pub fn new() -> Stats {
         Stats {
-            fcps: 0,
             total: 0,
             crashes: 0,
             cycles: 0,    
@@ -36,7 +34,9 @@ impl Stats {
     }
 
     pub fn show_stats(&self, sec: &u64, elapsed: &Duration) {
+
         let fcps = self.total / sec;
+
         print!("\n[ Fuzzing Stats ]\n");
         print!("+----------------------------------+\n");
         print!("| [time]      {:?}\n", elapsed);
