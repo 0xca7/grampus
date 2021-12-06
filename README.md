@@ -39,7 +39,7 @@ S ::= 'a'S'b' | 'a' 'b'
 # non-terminal are all strings without single quotes
 # if a space is to be kept, mark it with a "^" character
 ```
-If you want to keep a space in the grammar, use '#'. The parser
+If you want to keep a space in the grammar, use '^'. The parser
 will replace this with a space (0x20).
 
 ### 0xca7
