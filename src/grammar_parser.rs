@@ -24,54 +24,23 @@ use std::collections::HashSet;
 // '(.*?)'
 use regex::Regex;
 
+const WHITESPACE: &str = "^";
+
 /// the symbol for replacement in a grammar.
 /// example: S = aSb (= is replacement), S -> aabS (-> is replacement)
-const PRODUCTION: &str = "=";
+const PRODUCTION: &str = "::=";
 
 /// delimiter symbol for productions
 /// example: S = aSb | ab
 const DELIMITER:  &str = "|";
 
-/// represents a formal grammar, including productions, terminals and 
-/// non-terminals 
-//pub struct Grammar {
-//    /// productions key => value 
-//    pub productions: HashMap<String, Vec<Vec<String>>>,
-//    /// terminal symbols
-//    pub terminals: HashSet<String>,
-//    /// non-terminal symbols
-//    pub non_terminals: HashSet<String>,
-//}
-//
-//impl Grammar {
-//    /// create a new, empty grammar
-//    pub fn new() -> Grammar {
-//        Grammar {
-//            productions: HashMap::new(),
-//            terminals: HashSet::new(),
-//            non_terminals: HashSet::new(),
-//        }
-//    }
-//}
-//
-//impl fmt::Display for Grammar {
-//    // This trait requires `fmt` with this exact signature.
-//    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-//        for (key, value) in &self.productions {
-//            write!(f, "{} => {:?}\n", key, value)?;
-//        }
-//        write!(f, "terminals: {:?}\n", self.terminals)?;
-//        write!(f, "non-terminals: {:?}\n", self.non_terminals)
-//    }
-//}
-//
 /// split a production by whitespaces and apply the 
 /// `split_non_terminals` function to it
 pub fn split_production(text: &String) -> Vec<String> {
 
     // split by whitespace
     let temp = text.split(" ")
-        .map(|x| x.to_string().replace("#"," "))
+        .map(|x| x.to_string().replace(WHITESPACE," "))
         .collect::<Vec<String>>();
 
     let mut split = Vec::new();

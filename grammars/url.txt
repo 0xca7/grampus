@@ -1,0 +1,10 @@
+URL ::= 'http://' HOSTPORT PATH | 'https://' HOSTPORT PATH
+HOSTPORT ::= STRING
+STRING ::= STRING LETTER | STRING DIGIT | LETTER | DIGIT
+PATH ::= DOMAIN DIR | DOMAIN
+DIR ::= STRING DELIM | STRING QUERY
+DELIM ::= '/' STRING | '#' STRING | '/'
+QUERY ::= '?' STRING '=' STRING
+DOMAIN ::= '.de/'| '.com/'| '.uk/'
+DIGIT ::= '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
+LETTER ::= 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm' | 'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't' | 'u' | 'v' | 'w' | 'x' | 'y' | 'z'
