@@ -1,7 +1,7 @@
 # Grampus
 a crappy grammar fuzzer
 
-![Grampus](https://github.com/0xca7/grampus/tree/main/doc/grampus.png)
+![Grampus](doc/grampus.png)
 
 # UNDER CONSTRUCTION
 WARNING: grampus is still under construction, so it is still missing some tests and features.
