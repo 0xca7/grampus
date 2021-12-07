@@ -1,5 +1,12 @@
 # Grampus
-a crappy grammar fuzzer
+## a (crappy) grammar fuzzer
+
+A grammar fuzzer has knowledge of a formal grammar and uses that grammar to generate valid inputs.
+For example, a grammar fuzzer may know the grammar to produce a valid URL. This valid URL is then
+mutated and used for fuzzing. For example, it could be used to fuzz an URL parser.
+
+Grampus is a grammar fuzzer that reads a grammar from a file, it then generates a corpus using
+that grammar and uses that corpus for fuzzing. 
 
 ![Grampus](doc/grampus.png)
 
