@@ -29,6 +29,7 @@ impl FnvHash {
 
     /// the hashing algorithm
     pub fn hash(&mut self, data: &[u8]) -> u64 {
+        self.offset = FNV_OFFSET_BASIS;
         let mut hash: u64 = self.offset;
         for byte in data.iter() {
             hash = hash ^ (*byte as u64);

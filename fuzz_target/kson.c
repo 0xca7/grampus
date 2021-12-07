@@ -125,6 +125,7 @@ kson_t *kson_parse(const char *json)
 	kson = (kson_t*)calloc(1, sizeof(kson_t));
 	kson->root = kson_parse_core(json, &kson->n_nodes, &error, 0);
 	if (error) {
+        printf("[0xca7] kson_parse_core returned an error\n");
 		kson_destroy(kson);
 		return 0;
 	}
