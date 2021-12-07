@@ -1,8 +1,9 @@
-//
-// internal representation of a syntax tree
-//
-// 0xca7
-//
+/*
+    Description:
+        internal representation of a syntax tree
+
+    Author: 0xca7
+*/
 
 use std::fmt;
 

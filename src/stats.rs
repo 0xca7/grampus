@@ -1,13 +1,19 @@
-//
-// Fuzzing Statistics
-// 0xca7
-//
-
+/*
+    Description:
+        keep track of fuzzing stats
+    
+    Author:
+        0xca7
+*/
 use std::time::Duration;
 
+/// statistics for fuzzing
 pub struct Stats {
+    /// total fuzz cases
     total: u64,
+    /// crashes encountered
     crashes: u64,
+    /// cycles will be added in the future...
     cycles: u64,
 }
 
@@ -46,7 +52,7 @@ impl Stats {
         print!("| [cycles]    {}\n", self.cycles);
         print!("+----------------------------------+\n");
         // clear screen after each print.
-        //print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
+        print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
     }
 
 }

@@ -1,13 +1,12 @@
-//
-// mutations and mutation strategies
-// for fuzzing.
-//
-// 0xca7
-//
+/*
+    Description:
+        mutations and mutation strategies
+        for fuzzing.
 
+    Author: 0xca7
+*/
 
 extern crate xshift;
-// fast pseudo-random numbers
 use xshift::XorShift64;
 
 use crate::util::generate_seed;
@@ -46,6 +45,8 @@ impl Mutator {
         }
     }
 
+    /// take an input and apply `self.max_mutations` to it
+    /// clones the `input` and returns the mutated result
     pub fn mutate(&mut self, input: &Vec<u8>) -> Vec<u8> {
     
         let mut mutation = input.clone();

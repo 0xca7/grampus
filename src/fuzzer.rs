@@ -21,7 +21,7 @@ use crate::util::*;
 use crate::stats::Stats;
 use crate::mutation::Mutator;
 
-const NUMBER_THREADS: usize = 4;
+const NUMBER_THREADS: usize = 8;
 const MAX_NUMBER_MUTATIONS : usize = 4;
 
 /// worker thread for a fuzzer. mutates an input from the

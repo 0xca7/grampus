@@ -9,7 +9,7 @@
         
         some functions in this file are not programmed in an optimal
         way. This is because I didn't want to use any crates or rust
-        nightly. 
+        nightly. I hope I will find better ways to code these.
 
     Author: 0xca7
 */
@@ -52,7 +52,6 @@ pub fn split_production(text: &String) -> Vec<String> {
 
     split
 }
-
 
 /// badly programmed function to split a non-terminal
 /// and a terminal when they are written without a space

@@ -1,6 +1,7 @@
 /*
     Description:
         Input Generation from a given Grammar
+
     Author: 0xca7
 */
 use std::fmt;
@@ -64,9 +65,9 @@ impl Grammar {
 
 }
 
-/// display trait
 /// NOTE:   this is a little problematic, does not 
-///         print in the right order
+///         print in the right order (which is expected
+///         when you have a hashmap), mostly there for debugging.
 impl fmt::Display for Grammar {
 
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

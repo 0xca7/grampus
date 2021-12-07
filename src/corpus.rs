@@ -86,8 +86,7 @@ pub struct Corpus {
     forest:         Vec<TreeNode>,
     /// random number generator
     prng:           XorShift64,
-    /// the `Grammar` used to generate syntax trees
-    /// from a grammar
+    /// the `Grammar` used to generate syntax trees from
     grammar:        Grammar,
     /// start symbol of the grammar
     start_symbol:   String,
@@ -157,6 +156,7 @@ impl Corpus {
 
     } // pub fn generate
 
+    /// return inputs for fuzzing. these are valid strings.
     pub fn get_inputs(&self) -> Vec<String> {
         self.inputs.clone()
     }

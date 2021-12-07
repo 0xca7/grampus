@@ -1,7 +1,9 @@
-// 
-// libaries and modules used in the
-// cfg_grammar project
-//
+/* 
+    Description:
+        libaries and modules used in the
+        grampus project
+    Author: 0xca7
+*/
 
 /// utility functions
 pub mod util;
