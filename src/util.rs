@@ -5,8 +5,50 @@
     
     Author: 0xca7
 */
+
+use std::fs;
 use std::fs::File;
+use std::io::BufReader;
+use std::path::Path;
 use std::io::prelude::*;
+
+use crate::grammar_parser::PRODUCTION;
+
+/// check if a file located at `filepath` exists
+pub fn file_exists(filepath: &String) -> bool {
+    Path::new(filepath).exists()
+}
+
+/// check the first line of a grammar file `filename` and
+/// extract the start symbol. check if this start symbol 
+/// matches with the one `expected`.
+pub fn check_start_symbol(filepath: &String, expected: &String) -> bool {
+
+    let file = match fs::File::open(filepath) {
+        Ok(file) => file,
+        Err(_) => panic!("to open file {}", filepath),
+    };
+
+    let mut buffer = BufReader::new(file);
+    let mut line = String::new();
+
+    buffer.read_line(&mut line).expect("Unable to read line");
+
+    line = match line.split(PRODUCTION).next() {
+        Some(s) => s.to_string(),
+        None => return false,
+    };
+
+    // remove any whitespaces from the symbol
+    line.retain(|c| !c.is_whitespace());
+
+    if line == *expected {
+        return true;
+    }
+    false
+}
+
+
 
 /// generates a seed for a RNG 
 /// WARNING: contains unsafe code

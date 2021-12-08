@@ -8,7 +8,9 @@
         0xca7
 */
 
+use std::fs::File;
 use std::collections::HashSet;
+use std::io::{BufWriter, Write};
 
 extern crate xshift;
 use xshift::XorShift64;
@@ -159,6 +161,20 @@ impl Corpus {
     /// return inputs for fuzzing. these are valid strings.
     pub fn get_inputs(&self) -> Vec<String> {
         self.inputs.clone()
+    }
+
+    /// write the corpus to a file
+    pub fn write_corpus(&self) -> std::io::Result<()> {
+
+        let filename = format!("corpus/corpus.txt");
+        let file = File::create(filename)?;
+        let mut writer = BufWriter::new(file);
+
+        for input in &self.inputs {
+            write!(&mut writer, "{}\n", input)?;
+        }
+
+        Ok(())
     }
 
 }

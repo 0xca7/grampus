@@ -31,7 +31,13 @@ For a description read the pdf in the `doc` folder.
 
 ```
 ./bootstrap.sh
-cargo run
+
+TRY IT OUT:
+cargo run -- --fuzz-target fuzz_target/example_target --grammar-file grammars/json.txt --start-symbol JSON
+
+USAGE:
+cargo run -- --fuzz-target <fuzz_target> --grammar-file <grammar_file> --start-symbol <start_symbol>
+
 ```
 
 ## Grammar 

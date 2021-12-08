@@ -28,7 +28,7 @@ const MAX_NUMBER_MUTATIONS : usize = 4;
 /// corpus and passes it to the PUT. The resulting return code
 /// from the PUT is then assessed and a crashfile is written if
 /// the PUT crashed given the current input.
-fn worker(thread_id: u32, corpus: Arc<Vec<String>>, 
+fn worker(thread_id: u32, corpus: Arc<Vec<String>>, target: String,
     stats: Arc<Mutex<Stats>>) {
 
     print!("[ Worker Thread {} started ]\n", thread_id);
@@ -42,6 +42,8 @@ fn worker(thread_id: u32, corpus: Arc<Vec<String>>,
     let mut mutator = Mutator::new(MAX_NUMBER_MUTATIONS);
 
     let mut fnv = FnvHash::new();
+
+    let target = target.clone();
     
     loop {
         // select a random input from the corpus
@@ -58,7 +60,7 @@ fn worker(thread_id: u32, corpus: Arc<Vec<String>>,
 
         // launch PUT and get result
         
-        let output = Command::new("./fuzz_target/example_target")
+        let output = Command::new(&target)
             .arg(input_filename)
             .output();
 
@@ -96,7 +98,7 @@ fn worker(thread_id: u32, corpus: Arc<Vec<String>>,
 /// `NUMBER_THREADS` fuzzing threads
 /// `inputs` is the corpus of valid strings used for 
 /// mutations by the fuzzer
-pub fn fuzz(inputs: Vec<String>) {
+pub fn fuzz(inputs: Vec<String>, target: &String) {
 
     let mut seconds = 0;
     let mut handles = Vec::new();
@@ -109,8 +111,9 @@ pub fn fuzz(inputs: Vec<String>) {
     for i in 0..NUMBER_THREADS {
         let corpus = Arc::clone(&corpus);
         let stats = Arc::clone(&stats);
+        let target = target.clone();
         let handle = thread::spawn(move || {
-            worker(i as u32, corpus, stats);
+            worker(i as u32, corpus, target, stats);
         });
         handles.push(handle);
     }
@@ -124,6 +127,7 @@ pub fn fuzz(inputs: Vec<String>) {
         _stats.show_stats(&seconds, &now.elapsed());
     }
 
+    // NOTE: resolve this
     for handle in handles {
         handle.join().unwrap();
     }

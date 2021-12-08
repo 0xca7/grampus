@@ -28,7 +28,7 @@ const WHITESPACE: &str = "^";
 
 /// the symbol for replacement in a grammar.
 /// example: S = aSb (= is replacement), S -> aabS (-> is replacement)
-const PRODUCTION: &str = "::=";
+pub const PRODUCTION: &str = "::=";
 
 /// delimiter symbol for productions
 /// example: S = aSb | ab

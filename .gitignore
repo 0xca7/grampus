@@ -16,5 +16,6 @@ Cargo.lock
 /libs/fnv/target
 /libs/xshift/target
 /crashes
+/corpus
 /fuzz_inputs
 /fuzz_target/example_target
