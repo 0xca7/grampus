@@ -81,6 +81,7 @@ fn derive(rand: &mut XorShift64, tree: &mut TreeNode,
 }
 
 /// the corpus for fuzzing
+#[derive(Clone)]
 pub struct Corpus {
     /// number of trees in forest
     forest_size:    usize,
@@ -131,6 +132,10 @@ impl Corpus {
         // hashes of inputs
         let mut hashes = HashSet::new();
 
+        // clear inputs
+        self.forest.clear();
+        self.inputs.clear();
+
         // generate a syntax tree for each tree in `forest`
         // and make sure there are no duplicates
         for _ in 0..self.forest_size {
@@ -158,9 +163,11 @@ impl Corpus {
 
     } // pub fn generate
 
-    /// return inputs for fuzzing. these are valid strings.
-    pub fn get_inputs(&self) -> Vec<String> {
-        self.inputs.clone()
+    /// get a random input for fuzzing
+    pub fn get_input(&mut self) -> String {
+        // mut self because prng must be mutable
+        self.inputs[self.prng.rand() as usize % self.inputs.len()]
+            .clone()
     }
 
     /// write the corpus to a file

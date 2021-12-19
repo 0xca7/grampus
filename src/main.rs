@@ -7,10 +7,8 @@
 */
 
 use std::process;
-use std::time::Instant;
 
 use colored::*;
-
 use clap::{Arg, App};
 
 use grampus::util::{file_exists, check_start_symbol};
@@ -86,22 +84,15 @@ fn main() {
         process::exit(1);
     }
 
-    let mut corpus = Corpus::new(
+    // get a new corpus instance, this reads the grammar into
+    // an internal representation
+    let corpus = Corpus::new(
         &grammar_file, &start_symbol, MAX_EXPANSION, FOREST_SIZE
     );
-
-    let ts = Instant::now();
-    corpus.generate();
-    print!("\n\ntime taken to generate corpus: {:?}\n", ts.elapsed());
-    
-    // write the corpus to a file so we can view it
-    match corpus.write_corpus() {
-        Ok(_)   => (),
-        Err(e)  => print!("warning: couldn't write corpus: {}\n", e),
-    }
-
-    let inputs = corpus.get_inputs();
-        
-    fuzz(inputs, &fuzz_target);
-    
+       
+    // use the corpus for fuzzing a target
+    fuzz(corpus, &fuzz_target);
 }
+
+
+

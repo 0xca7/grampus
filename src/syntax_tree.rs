@@ -13,7 +13,7 @@ use fnv::FnvHash;
 /// a node in a derivation tree 
 /// this node contains the node `value` and a list of `children`,
 /// the children are child nodes of the node
-#[derive(Debug)]
+#[derive(Debug,Clone)]
 pub struct TreeNode {
     /// the value stored in this node
     pub value: String,

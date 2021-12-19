@@ -4,6 +4,7 @@
 //
 
 /// Xorshift64 for fast pseudo-random numbers
+#[derive(Clone)]
 pub struct XorShift64 {
     /// the internal state
     x: u64,

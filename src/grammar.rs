@@ -11,7 +11,7 @@ use std::collections::HashMap;
 use crate::grammar_parser::{parse_grammar};
 
 /// contains a grammar and options for generation
-#[derive(Debug)]
+#[derive(Debug,Clone)]
 pub struct Grammar {
 
     /// the grammar represented via productions

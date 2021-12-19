@@ -16,7 +16,6 @@ WARNING: grampus is still under construction, so it is still missing some tests 
 ## TODO 
 
 - **more tests**
-- add a scheduler
 - add more mutations
 - make the grammar parser suck less
 - write a good fuzzer

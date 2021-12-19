@@ -14,6 +14,15 @@ use crate::util::generate_seed;
 /// alias for mutation functions
 pub type MutationFunction = fn(rand: &mut XorShift64, &Vec<u8>) -> Vec<u8>;
 
+/// describes the specific mutations a mutator applies
+pub enum MutatorType {
+    /// bitflip, XOR and arithmetic mutations only
+    Deterministic,
+    /// bitflip, XOR, arithmetic, insert and remove 
+    NonDeterministic,
+    // rest is open for implementation
+}
+
 /// stores mutation types and applies a random mutation to an input
 pub struct Mutator {
     /// to choose a random mutation to apply to an input
@@ -26,22 +35,33 @@ pub struct Mutator {
 
 impl Mutator {
 
-    pub fn new(max_mutations: usize) -> Mutator {
+    /// creates a new mutator of `mut_type` and sets the 
+    /// `max_mutations` to apply per input string
+    pub fn new(mut_type: MutatorType, max_mutations: usize) -> Mutator {
 
         let prng = XorShift64::new(generate_seed()).unwrap();
 
-        let remove:     MutationFunction = mutation_remove;
-        let insert:     MutationFunction = mutation_insert;
-        let bitflip:    MutationFunction = mutation_bitflip;
-        let xor:        MutationFunction = mutation_xor;
-        let arithmetic: MutationFunction = mutation_arithmetic;
+        let mut mutations: Vec<MutationFunction> = Vec::new();
+
+        match mut_type {
+            MutatorType::Deterministic      => {
+                mutations.push(mutation_bitflip);
+                mutations.push(mutation_xor);
+                mutations.push(mutation_arithmetic);
+            },
+            MutatorType::NonDeterministic   => {
+                mutations.push(mutation_bitflip);
+                mutations.push(mutation_xor);
+                mutations.push(mutation_arithmetic);
+                mutations.push(mutation_insert);
+                mutations.push(mutation_remove);
+            },
+        }
 
         Mutator {
-            prng:       prng,
-            mutations:  vec![
-                remove, insert, xor, arithmetic, bitflip
-            ],
-            max_mutations: max_mutations,
+            prng:           prng,
+            mutations:      mutations,
+            max_mutations:  max_mutations,
         }
     }
 

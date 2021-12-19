@@ -31,4 +31,5 @@ pub mod grammar;
 /// derive from a grammar
 pub mod syntax_tree;
 
-
+/// scheduler to determine what mutations to apply
+pub mod scheduler;
