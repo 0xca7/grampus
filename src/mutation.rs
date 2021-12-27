@@ -20,7 +20,8 @@ pub enum MutatorType {
     Deterministic,
     /// bitflip, XOR, arithmetic, insert and remove 
     NonDeterministic,
-    // rest is open for implementation
+    /// bitwalk, see `mutation_bitwalk`, insert and remove
+    BitWalk,
 }
 
 /// stores mutation types and applies a random mutation to an input
@@ -53,6 +54,11 @@ impl Mutator {
                 mutations.push(mutation_bitflip);
                 mutations.push(mutation_xor);
                 mutations.push(mutation_arithmetic);
+                mutations.push(mutation_insert);
+                mutations.push(mutation_remove);
+            },
+            MutatorType::BitWalk            => {
+                mutations.push(mutation_bitwalk);
                 mutations.push(mutation_insert);
                 mutations.push(mutation_remove);
             },
@@ -162,4 +168,20 @@ pub fn mutation_arithmetic(rand: &mut XorShift64, input: &Vec<u8>) -> Vec<u8> {
     // replace returns the old value, throw it away
     let _ = std::mem::replace(&mut v[idx], x);
     v
+}
+
+/// walk through the input byte by byte, flip l bits in each byte
+/// supported l-values: [1,4]
+pub fn mutation_bitwalk(rand: &mut XorShift64, input: &Vec<u8>) -> Vec<u8> {
+
+    let mut mutation = input.clone();
+    let l = (rand.rand() % 4) as usize + 1 ;
+
+    for byte in &mut mutation {
+        for _ in 0..l {
+            *byte ^= 1 << (rand.rand() % 8) as usize;
+        }
+    }
+
+    mutation
 }

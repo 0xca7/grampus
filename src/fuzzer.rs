@@ -77,11 +77,17 @@ fn worker(thread_id: u32, corpus: Corpus, target: String,
                         break 'fuzz_loop;
                     }
                     FuzzingCycle::CycleDeterministic    => {
-                        mutator = Mutator::new(MutatorType::Deterministic,
+                        mutator = Mutator::new(
+                            MutatorType::Deterministic,
                             MAX_NUMBER_MUTATIONS);
                     },
                     FuzzingCycle::CycleNonDeterministic => {
-                        mutator = Mutator::new(MutatorType::NonDeterministic,
+                        mutator = Mutator::new(
+                            MutatorType::NonDeterministic,
+                            MAX_NUMBER_MUTATIONS);
+                    },
+                    FuzzingCycle::CycleBitWalk => {
+                        mutator = Mutator::new(MutatorType::BitWalk,
                             MAX_NUMBER_MUTATIONS);
                     },
                 } // match 

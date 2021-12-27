@@ -28,6 +28,8 @@ pub enum FuzzingCycle {
     CycleDeterministic,
     /// remove chars, add chars + bitflips, xors, arithmetic
     CycleNonDeterministic,
+    /// remove chars, add chars + bitwalk
+    CycleBitWalk,
 }
 
 pub struct Scheduler {
@@ -62,6 +64,8 @@ impl Scheduler {
                 FuzzingCycle::CycleDeterministic => 
                     FuzzingCycle::CycleNonDeterministic,
                 FuzzingCycle::CycleNonDeterministic =>
+                    FuzzingCycle::CycleBitWalk,
+                FuzzingCycle::CycleBitWalk =>
                     FuzzingCycle::CycleRegenerate,
             };
 
