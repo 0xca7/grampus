@@ -7,9 +7,10 @@
 */
 
 use std::thread;
-use std::sync::{Arc, Mutex};
-use std::process::Command;
 use std::time::Instant;
+use std::sync::{Arc, Mutex};
+use std::process::{Command, Stdio};
+use std::os::unix::process::ExitStatusExt;
 
 extern crate fnv;
 use fnv::FnvHash;
@@ -20,8 +21,17 @@ use crate::corpus::Corpus;
 use crate::mutation::{Mutator, MutatorType};
 use crate::scheduler::{Scheduler, FuzzingCycle};
 
+/// signal numbers
+const SIGILL:   i32 = 4;
+const SIGABRT:  i32 = 6;
+const SIGBUS:   i32 = 7;
+const SIGSEGV:  i32 = 11;
+
+/// number of fuzzer threads
 const NUMBER_THREADS:       usize = 8;
+/// max number of fuzz cases per cycle
 const MAX_ITERATIONS_CYCLE: usize = 10000;
+/// maximum number of mutations applied to one input
 const MAX_NUMBER_MUTATIONS: usize = 4;
 
 /// worker thread for a fuzzer. 
@@ -105,37 +115,50 @@ fn worker(thread_id: u32, corpus: Corpus, target: String,
                 write_input_file(&fuzz_input, thread_id).unwrap());
 
             // launch PUT and get result
-            let output = Command::new(&target)
+            let mut child = Command::new(&target)
                 .arg(input_filename)
-                .output();
+                .stdout(Stdio::null())
+                .stderr(Stdio::null())
+                .spawn()
+                .expect("failed to start process");
 
-            let res = output.unwrap().status.code();
+            let res = child.wait();
 
             // check the result, if there was a crash, write 
             // a crash file
             match res {
-                Some(code) => {
-                    if code != 0 {
-                        //println!("code: {} => {}", code, fuzz_input);
-                    }
-                },
-                None => { 
-                    match write_crashfile(&fuzz_input, 
-                        fnv.hash(&fuzz_input[..])) {
-                        Ok(_)   => (),
-                        Err(e)  => print!("thread {} \
-                            couldn't write crashfile: {}\n
-                            fuzz input: {:?}\n",
-                            thread_id, e, fuzz_input),
-                    }
-                  
-                    // if a crash was found it should go into
-                    // the stats
-                    let mut _stats = stats.lock().unwrap();
-                    _stats.inc_crashes();
-                },
-            };
+                // check the exit code for a signal
+                Ok(status) => {
+                    // check what signal we got
+                    match ExitStatusExt::signal(&status) {
+                        Some(sig) => {
+                        match sig {
+                            SIGILL | SIGABRT | SIGBUS | SIGSEGV => {
 
+                            match write_crashfile(&fuzz_input, 
+                                fnv.hash(&fuzz_input[..])) {
+                                Ok(_)   => (),
+                                Err(e)  => print!("thread {} \
+                                    couldn't write crashfile: {}\n
+                                    fuzz input: {:?}\n",
+                                    thread_id, e, fuzz_input),
+                            }
+
+                            // if a crash was found it should go into
+                            // the stats
+                            let mut _stats = stats.lock().unwrap();
+                            _stats.inc_crashes();
+                            },
+                            _ => print!("exited with unkown signal\n"),
+                            }
+                        }, // got a signal   
+                        // no signal was received
+                        None => (),
+                    }
+                },
+
+            Err(e) => print!("wait failed: {}\n", e),
+            }
             // write stats for fuzz cases
             let mut _stats = stats.lock().unwrap();
             _stats.inc_fuzz_cases();
