@@ -31,9 +31,18 @@ fn derive(rand: &mut XorShift64, tree: &mut TreeNode,
         // keep track of non-terminals in derivation
         g.no_non_terminals += 1;
         
-        // unwrap safe, as the value is in the grammar for certain
-        // here, we get all possible productions from the grammar
-        let derivation = g.productions.get(&tree.value).unwrap();
+        // unwrap will fail if there is a syntax error in
+        // the grammar, thus check this here and exit if there is
+        // a problem
+        let derivation = match g.productions.get(&tree.value) {
+            Some(value) => value,   
+            None        => {
+                print!("unidentified symbol {}, aborting\n", 
+                    tree.value);
+                std::process::exit(1);
+            }
+        };
+
         let mut ridx = 0;
 
         // if we haven't reached the max. non-terminals, 
@@ -153,6 +162,9 @@ impl Corpus {
                     let mut input = String::new();
                     hashes.insert(hash);
                     tree.build(&mut input);
+                    // NOTE: whitespace replacement can take place here,
+                    // but I don't like it...
+                    input = input.replace("\\n", "\n");
                     self.forest.push(tree);
                     self.inputs.push(input);
                     break;
@@ -173,12 +185,16 @@ impl Corpus {
     /// write the corpus to a file
     pub fn write_corpus(&self) -> std::io::Result<()> {
 
-        let filename = format!("corpus/corpus.txt");
-        let file = File::create(filename)?;
-        let mut writer = BufWriter::new(file);
+        let mut n: usize = 0;
 
         for input in &self.inputs {
-            write!(&mut writer, "{}\n", input)?;
+            let filename = format!("corpus/{:#04}", n);
+            let file = File::create(filename)?;
+            let mut writer = BufWriter::new(file);
+            // NOTE: add a newline here if the output shall
+            // contain a newline as a last character
+            write!(&mut writer, "{}", input)?;
+            n += 1;
         }
 
         Ok(())
